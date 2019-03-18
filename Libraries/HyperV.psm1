@@ -375,6 +375,10 @@ function Create-HyperVGroupDeployment([string]$HyperVGroupName, $HyperVGroupXML,
                     Write-LogInfo "Set-VMFirmware -VMName $CurrentVMName -EnableSecureBoot Off -ComputerName $HyperVHost"
                     Set-VMFirmware -VMName $CurrentVMName -EnableSecureBoot Off -ComputerName $HyperVHost
                 }
+
+                Set-VM -VMName $CurrentVMName -AutomaticStopAction ShutDown
+                Update-VMVersion -Name $CurrentVMName -Force -ErrorAction SilentlyContinue
+
                 if ($NewVM.AutomaticCheckpointsEnabled) {
                     Write-LogInfo "Set-VM -Name $CurrentVMName -AutomaticCheckpointsEnabled $false -ComputerName $HyperVHost"
                     Set-VM -Name $CurrentVMName -AutomaticCheckpointsEnabled $false -ComputerName $HyperVHost
