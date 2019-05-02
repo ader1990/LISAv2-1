@@ -468,7 +468,7 @@ function Testpmd_Multiple_Tx_Flows_Setup() {
 # Notes:
 #   - Be aware of subnets
 function Testpmd_Macfwd_To_Dest() {
-	if [ -z "${1}" -o ]; then
+	if [ -z "${1}" ]; then
 		LogErr "ERROR: must provide dest ip to Testpmd_Macfwd_To_Dest()"
 		SetTestStateAborted
 		exit 1
