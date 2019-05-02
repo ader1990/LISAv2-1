@@ -73,17 +73,17 @@ function Run_Testfailsafe() {
 	LogMsg "${forwarder_testfwd_cmd}"
 	ssh "${forwarder}" "${forwarder_testfwd_cmd}" 2>&1 > "${LOG_DIR}"/dpdk-testfailsafe-forwarder.log &
 
+	LogMsg "Sleeping for 5 seconds before sender starts"
 	sleep 5
-	
+
 	local sender_testfwd_cmd="$(Create_Testpmd_Cmd ${core} "${sender_busaddr}" "${sender_iface}" txonly)"
 	# reduce txd so VF revoke doesn't kill forwarder
 	sender_testfwd_cmd=$(echo "${sender_testfwd_cmd}" | sed -r 's,(--.xd=)4096,\110,')
 	LogMsg "${sender_testfwd_cmd}"
 	eval "${sender_testfwd_cmd} 2>&1 > ${LOG_DIR}/dpdk-testfailsafe-sender.log &"
-	
 
-	sleep 120
-	# testpmd is has now run for 120 request testcase driver to revoke VF
+	LogMsg "Sleeping for 150 seconds for sender to finish sending packets"
+	sleep 150
 	local ready_for_revoke_msg="READY_FOR_REVOKE"
 	Update_Phase ${ready_for_revoke_msg}
 	local phase
@@ -94,6 +94,8 @@ function Run_Testfailsafe() {
 			sleep 120
 			break
 		fi
+		LogMsg "Waiting 2 seconds for phase update"
+		sleep 2
 	done
 
 	# vf was revoked for >= 120. now ready for it to be re-enabled
@@ -106,8 +108,10 @@ function Run_Testfailsafe() {
 			sleep 120
 			break
 		fi
+		LogMsg "Waiting 2 seconds for phase update"
+		sleep 2
 	done
-	
+
 	LogMsg "killing testpmd"
 	local kill_cmd="pkill testpmd"
 	for ip in $IP_ADDRS; do
