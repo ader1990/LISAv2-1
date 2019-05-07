@@ -76,7 +76,9 @@ function Run_Testfailsafe() {
 	LogMsg "Sleeping for 5 seconds before sender starts"
 	sleep 5
 
-	local sender_testfwd_cmd="$(Create_Testpmd_Cmd ${core} "${sender_busaddr}" "${sender_iface}" txonly)"
+
+	trx_rx_ips=$(Get_Trx_Rx_Ip_Flags "${forwarder}")
+	local sender_testfwd_cmd="$(Create_Testpmd_Cmd ${core} "${sender_busaddr}" "${sender_iface}" txonly "${trx_rx_ips}")"
 	# reduce txd so VF revoke doesn't kill forwarder
 	sender_testfwd_cmd=$(echo "${sender_testfwd_cmd}" | sed -r 's,(--.xd=)4096,\110,')
 	LogMsg "${sender_testfwd_cmd}"
