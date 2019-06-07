@@ -290,10 +290,10 @@ function InstallKernel() {
         apt -y update
 
         LogMsg "Adding packages required by the kernel."
-        apt install -y binutils
+        DEBIAN_FRONTEND=noninteractive apt install -y binutils crda wireless-crda
 
         LogMsg "Removing packages that do not allow the kernel to be installed"
-        apt remove -y grub-legacy-ec2
+        DEBIAN_FRONTEND=noninteractive apt remove -y grub-legacy-ec2 linux-image-$(uname -r)
 
         if [[ $CustomKernel =~ "http" ]];then
             CheckInstallLockUbuntu
